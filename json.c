@@ -188,7 +188,7 @@ int YASL_json(struct YASL_State *S) {
 
 	struct Parser parser = NEW_PARSER(lexinput_new_bb(bytes, bytes_len));
 	gettok(&parser.lex);
-	struct YASL_Object tmp = parse_object(&parser);
+	struct YASL_Object tmp = parse_value(&parser);
 
 	if (parser.status == YASL_SUCCESS)
 		vm_push((struct VM *)S, tmp);
