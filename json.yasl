@@ -1,0 +1,47 @@
+const parse_json = __require_c__('libjson.so')
+
+const fn stringify(const val) {
+	match val {
+	bool | int | float {
+		return val->tostr()
+	}
+	str {
+		return '"' ~ val->replace('"', `\"`) ~ '"'
+	}
+	undef {
+		return "null"
+	}
+	list {
+		const tmp = []
+		for i in val {
+			tmp->push(stringify(i))
+		}
+		return "[#{tmp->join(', ')}]"
+	}
+	table {
+		const tmp = []
+		for k in val {
+			tmp->push("#{stringify(k)}: #{stringify(val[k])}")
+		}
+		return "{#{tmp->join(', ')}}"
+	}
+	* {
+		error("Cannot serialize value: " ~ val)
+	}
+	}
+}
+
+const fn open(const filename) {
+	const f = io.open(filename)
+	if !f {
+		error("unable to open #{filename}")
+	}
+	return parse_json(f->read('a'))
+}
+
+export {
+	open = open,
+	parse = parse_json,
+	stringify = stringify
+}
+
